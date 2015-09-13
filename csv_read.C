@@ -26,22 +26,23 @@ float scale_v1, scale_v2, scale_v3, scale_v4;
 void display()
 {
 
-  int size = v1.size();
-  printf("size = %d\n", size);
+int size = v1.size();
+printf("size = %d\n", size);
 
-  glClearColor(1, 1, 1, 1); 
-  glClear(GL_COLOR_BUFFER_BIT); 
-  glColor3f(0, 0, 0);     //glColor* have been deprecated in OpenGL 3
+glClearColor(1, 1, 1, 1); 
+glClear(GL_COLOR_BUFFER_BIT); 
+glViewport(0,0,width/2,height/2);
+glColor3f(0, 0, 0);     //glColor* have been deprecated in OpenGL 3
 
-  glPointSize(10);
-  glBegin(GL_POINTS);
-  for (int i=0; i<size; i++) {
-    float x = (v1[i]-min_v1)*2/scale_v1 - 1 ;
-    float y = (v2[i]-min_v2)*2/scale_v2 - 1 ;
-    glVertex2f(x,y);
-  }
-  glEnd();
-  glFlush(); 
+glPointSize(10);
+glBegin(GL_POINTS);
+for (int i=0; i<size; i++) {
+  float x = (v1[i]-min_v1)*2/scale_v1 - 1 ;
+  float y = (v2[i]-min_v2)*2/scale_v2 - 1 ;
+  glVertex2f(x,y);
+}
+glEnd();
+glFlush(); 
 
 }
 
@@ -98,19 +99,7 @@ int main(int argc, char** argv) {
   glutInitWindowSize(width,height);
   glutCreateWindow("Han-Wei Shen's simple program");
 
-
   glutDisplayFunc(display);
-  
-  /* 
-  glutReshapeFunc(resize);
-  glutMouseFunc(mymouse);
-  glutKeyboardFunc(mykey);
-
-  // create menu
-  glutCreateMenu(mymenu);
-  glutAddMenuEntry("Point", 1);
-  glutAttachMenu(GLUT_RIGHT_BUTTON);
-  */
 
   // enter the event loop
   glutMainLoop();
