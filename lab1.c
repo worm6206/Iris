@@ -83,17 +83,56 @@ void display()
 {
 	glClearColor(1, 1, 1, 1); 
 	glClear(GL_COLOR_BUFFER_BIT); 
-	glColor3f(0, 0, 0);
+	float temp = 800/(value[0].size()-1),tempc=0;
+	vector<string> namebank;
+	float floatbank[6][3] = {(1,0,0),(0,1,0),(0,0,1),(1,1,0),(1,0,1),(0,1,1)};
+	namebank.push_back(value[1][0]);
+	for (int z = 0; z < value[0].size()-1; z++)
+	{
+		for (int j = 0; j < value[0].size()-1; j++)
+		{
+			if(z+j==3) {} else
+			{
+				//Viewport
+				glViewport(temp*z,temp*j,temp,temp);
+				//points
+				glColor3f(0, 0, 0);
+				glPointSize(4);
+				glBegin(GL_POINTS);
+				for (int i=1; i<value.size(); i++) {
+					if (value[i][0]=="setosa")
+					{
+						glColor3f(1,0,0);
+					} else if (value[i][0]=="versicolor")
+					{
+						glColor3f(0,1,0);
+					}else if (value[i][0]=="virginica")
+					{
+						glColor3f(0,0,1);
+					}
+					float x = (atof(value[i][z+1].c_str())-min_v[z+1])*2/(max_v[z+1]- min_v[z+1]) - 1 ;
+					float y = (atof(value[i][4-j].c_str())-min_v[4-j])*2/(max_v[4-j]- min_v[4-j]) - 1 ;
+					glVertex2f(x*0.8,y*0.8);
+				}
+				glEnd();
+				//Borders
+				glLineWidth(1); 
+				glColor3f(0, 0, 0);
+				glBegin(GL_LINES);
+				glVertex2f(-0.85, -0.85);
+				glVertex2f(-0.85, 0.85);
+				glVertex2f(-0.85, -0.85);
+				glVertex2f(0.85, -0.85);
+				glVertex2f(0.85, 0.85);
+				glVertex2f(0.85, -0.85);
+				glVertex2f(0.85, 0.85);
+				glVertex2f(-0.85, 0.85);
+				glEnd();
 
-	glPointSize(10);
-	glBegin(GL_POINTS);
-	for (int i=0; i<value.size(); i++) {
-		float x = (atof(value[i][1].c_str())-min_v[1])*2/(max_v[1]- min_v[1]) - 1 ;
-		float y = (atof(value[i][2].c_str())-min_v[2])*2/(max_v[2]- min_v[2]) - 1 ;
-		glVertex2f(x,y);
+				glFlush(); 
+			}
+		}
 	}
-	glEnd();
-	glFlush(); 
 }
 
 int main(int argc, char** argv)
@@ -103,7 +142,7 @@ int main(int argc, char** argv)
 	getMaxMin(value);
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_RGB|GLUT_SINGLE);
-	glutInitWindowSize(500,500);
+	glutInitWindowSize(800,800);
 	glutCreateWindow("Lab1.c");
 
 	glutDisplayFunc(display);
