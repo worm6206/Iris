@@ -1,5 +1,7 @@
 #include <iostream>
 #include <fstream>
+#include <iomanip>
+#include <sstream>
 #include <string>
 #include <vector>
 #include <math.h>
@@ -105,6 +107,34 @@ void DrawCircle(float Xo, float Yo, float Rad)
 	glEnd();
 }
 
+void TextPrt(float x, float y, string InText)
+{
+	glColor3f( 0,0,0 );
+	// glRasterPos2f(x, y);
+	float amount=0,temp=width;
+	for (int i = 0; i < InText.size(); i++) {
+		amount+=glutBitmapWidth(GLUT_BITMAP_HELVETICA_18,InText[i]);
+	}
+	glRasterPos2f(x-(amount/130), y);
+	for (int i = 0; i < InText.size(); i++) {
+		glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, InText[i]);
+	}
+}
+
+void TickPrt(float x, float y, string InText)
+{
+	glColor3f( 0,0,0 );
+	// glRasterPos2f(x, y);
+	float amount=0,temp=width;
+	for (int i = 0; i < InText.size(); i++) {
+		amount+=glutBitmapWidth(GLUT_BITMAP_HELVETICA_10,InText[i]);
+	}
+	glRasterPos2f(x, y);
+	for (int i = 0; i < InText.size(); i++) {
+		glutBitmapCharacter(GLUT_BITMAP_HELVETICA_10, InText[i]);
+	}
+}
+
 void display()
 {
 	glClearColor(1, 1, 1, 1); 
@@ -117,7 +147,25 @@ void display()
 	{
 		for (int j = 0; j < value[0].size()-1; j++)
 		{
-			if(z+j==3) {} else
+			if(z+j==3) {
+				//Viewport
+				glViewport(wtemp*z,htemp*j,wtemp,htemp);
+				//Border
+				glLineWidth(1); 
+				glColor3f(0, 0, 0);
+				glBegin(GL_LINES);
+				glVertex2f(-0.85, -0.85);
+				glVertex2f(-0.85, 0.85);
+				glVertex2f(-0.85, -0.85);
+				glVertex2f(0.85, -0.85);
+				glVertex2f(0.85, 0.85);
+				glVertex2f(0.85, -0.85);
+				glVertex2f(0.85, 0.85);
+				glVertex2f(-0.85, 0.85);
+				glEnd();
+				TextPrt(0,0,value[0][z+1]);
+				glFlush();
+			} else
 			{
 				//Viewport
 				glViewport(wtemp*z,htemp*j,wtemp,htemp);
@@ -160,17 +208,32 @@ void display()
 				glLineWidth(1); 
 				glColor3f(0, 0, 0);
 				glBegin(GL_LINES);
-				for (int i = 0; i < 12; ++i)
+				for (int i = 1; i < 11; ++i)
 				{
+					//y
 					glVertex2f(-0.85+0.85*2*i/11, -0.87);
 					glVertex2f(-0.85+0.85*2*i/11, -0.83);
+					TickPrt(-0.85+0.85*2*i/11,-0.9,"1.3");
 
+					//x
 					glVertex2f(-0.87,-0.85+0.85*2*i/11);
 					glVertex2f(-0.83,-0.85+0.85*2*i/11);
 				}
-
-
 				glEnd();
+
+				//TickWords
+				for (int i = 1; i < 11; ++i)
+				{
+					stringstream stream, stream1;
+					//y
+					stream <<fixed<< setprecision(1) << min_v[z+1] + (max_v[z+1]-min_v[z+1])*i/10;
+					TickPrt(-0.9+0.85*2*i/11,-1+0.05*(i%2),stream.str());
+
+
+					//x
+					stream1 <<fixed<< setprecision(1) << min_v[4-j] + (max_v[4-j]-min_v[4-j])*i/10;
+					TickPrt(-1,-0.9+0.85*2*i/11,stream1.str());
+				}
 
 				glFlush(); 
 			}
@@ -180,8 +243,12 @@ void display()
 
 void resize(int w, int h)
 {
-    width=w;
-    height=h;
+	if (w<500 or h<500)
+	{
+		glutReshapeWindow(500,500);
+	}
+	width=w;
+	height=h;
 }
 
 int main(int argc, char** argv)
