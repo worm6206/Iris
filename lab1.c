@@ -11,12 +11,15 @@
 #include <GL/gl.h>
 #endif
 using namespace std;
+#define MIN(a,b) (((a)<(b))?(a):(b))
+#define MAX(a,b) (((a)>(b))?(a):(b))
 
 
 vector< vector<string> > value;
 vector<float> max_v,min_v;
 int width, height, cnt=0;
 float ww,hh;
+float DEG = 3.1415926/180;
 
 //Convert string into vector
 vector<string> string_into_vector(string input)
@@ -82,6 +85,26 @@ void getMaxMin(vector< vector<string> > input)
 	}
 }
 
+void DrawCircle(float Xo, float Yo, float Rad)
+{
+	glBegin(GL_POLYGON);
+	for (int i = 0; i < 360; ++i)
+	{
+		float DegRad = i*DEG;
+		glVertex2f(Xo+cos(DegRad)*Rad,Yo+sin(DegRad)*Rad);
+	}
+	glEnd();
+	glColor3f(0,0,0);
+	glLineWidth(1);		 
+	glBegin(GL_LINE_LOOP);
+	for (int i = 0; i < 360; ++i)
+	{
+		float DegRad = i*DEG;
+		glVertex2f(Xo+cos(DegRad)*Rad,Yo+sin(DegRad)*Rad);
+	}
+	glEnd();
+}
+
 void display()
 {
 	glClearColor(1, 1, 1, 1); 
@@ -114,10 +137,11 @@ void display()
 					float x = (atof(value[i][z+1].c_str())-min_v[z+1])*2/(max_v[z+1]- min_v[z+1]) - 1 ;
 					float y = (atof(value[i][4-j].c_str())-min_v[4-j])*2/(max_v[4-j]- min_v[4-j]) - 1 ;
 					cnt++;
-					glPointSize(2+cnt%4);
-					glBegin(GL_POINTS);
-					glVertex2f(x*0.8,y*0.8);
-					glEnd();
+					//glPointSize(2+cnt%4);
+					// glBegin(GL_POINTS);
+					// glVertex2f(x*0.8,y*0.8);
+					// glEnd();
+					DrawCircle(x*0.8, y*0.8,((cnt%4)*0.015) );
 				}
 				//Borders
 				glLineWidth(1); 
